@@ -15,6 +15,7 @@ By assigning to the wireless interface a fixed (not automatic) low metric value,
 4. On the _General_ tab click on **[Advanced]**
 5. On the _IP Settings_ tab locate _Automatic metric_ check-box and turn it off, then input the metric value in the _Interface metric_ text box
 6. Confirm with OK and/or Close until the _Network Connections_ window is in focus again
+
 ![image](https://github.com/user-attachments/assets/10b509d0-87e0-4584-bc2d-9573c31a6958)
 
 By adding a dedicated route via the ethernet interface for each private subnet that is to be contacted, the traffic destined for those subnets will be routed through it instead of the wireless interface (mask based routing has priority over metric based routing). Well, of course this interface does not need to be of ethernet type, it can be any kind of interface leading to private subnets. Unfortunately, Windows does not provide a way to add routes besides using the `route` command in an elevated console window: you are supposed to know some routing concepts and to be familiar with the command line.
@@ -30,4 +31,4 @@ By adding a dedicated route via the ethernet interface for each private subnet t
 8. When you don't need split routing anymore, run `win_split_routing off`.
 9. When you don't remember the current status, run `win_split_routing show`
 
-![image](https://github.com/user-attachments/assets/86ea1991-9efd-4b9a-915a-3e0b1c4483b8)
+![image](https://github.com/user-attachments/assets/4e8fd848-23e6-43a4-8021-dd62b55036b2)
