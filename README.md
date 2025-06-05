@@ -26,8 +26,8 @@ By adding a dedicated route via the ethernet interface for each private subnet t
 3. Run `win_split_routing on` ...
 4. It finds the metric and name of the LAN interface and the name of the INTERNET interface.
 5. It finds the default gateway of the LAN interface.
-6. It sets the metric of the INTERNET interface to 5 less than that of the LAN interface.
-7. It adds a permanent route via the default gateway of the LAN interface for each subnet listed in the beginning of the file itself.  Permanent routes survive rebooting.
+6. It sets the metric of the INTERNET interface to 1.
+7. It adds a persistent route via the default gateway of the LAN interface for each subnet listed in the beginning of the file itself.  Persistent routes survive rebooting.
 8. When you don't need split routing anymore, run `win_split_routing off`.
 9. When you don't remember the current status, run `win_split_routing show`
 
