@@ -13,7 +13,7 @@ DATA#end
 
 :: The index of the interface connected to the global internet (see: netsh interface ipv4 show interface)
 :: Most likely the WiFi interface
-set INTERNET_IF_IDX=12
+set INTERNET_IF_IDX=11
 :: The index of the interface connected to the LAN
 set LAN_IF_IDX=7
 
@@ -30,6 +30,7 @@ if "%1"=="on" (
   set ACTION=off
 ) else if "%1"=="show" (
   call :SHOWIF
+  call :SHOWDEFGW
   call :SHOWROUTES
   pause
   exit /b
@@ -246,6 +247,30 @@ for /f "delims=" %%a in ('route -4 print') do (
   if !count! EQU 1 echo %%a
 )
 echo.
+exit /b 0
+
+:SHOWDEFGW
+:: Show default gateways
+call :GETIFPARM
+if "%INTERNET_IF_NAME%"=="" (
+  echo Cannot find interface %INTERNET_IF_IDX%
+  exit /b 1
+)
+if %LAN_IF_NAME%=="" (
+  echo Cannot find interface %LAN_IF_IDX%
+  exit /b 1
+)
+call :GETDEFGW
+if not defined LAN_DEFGATEWAY (
+  echo Cannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"
+  exit /b 1
+)
+if not defined INTERNET_DEFGATEWAY (
+  echo Cannot find default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"
+  exit /b 1
+)
+echo Current default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%" is %LAN_DEFGATEWAY%
+echo Current default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%" is %INTERNET_DEFGATEWAY%
 exit /b 0
 
 :GETRM
