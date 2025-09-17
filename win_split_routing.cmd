@@ -256,7 +256,7 @@ if "%INTERNET_IF_NAME%"=="" (
   echo Cannot find interface %INTERNET_IF_IDX%
   exit /b 1
 )
-if %LAN_IF_NAME%=="" (
+if "%LAN_IF_NAME%"=="" (
   echo Cannot find interface %LAN_IF_IDX%
   exit /b 1
 )
@@ -291,3 +291,4 @@ for /f "tokens=1,2,3,4,5" %%a in ('route -4 print') do (
   if !count! EQU 2 exit /b 0
 )
 exit /b 0
+
