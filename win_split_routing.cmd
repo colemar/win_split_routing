@@ -13,9 +13,9 @@ DATA#end
 
 :: The index of the interface connected to the global internet (see: netsh interface ipv4 show interface)
 :: Most likely the WiFi interface
-set INTERNET_IF_IDX=11
+set INTERNET_IF_IDX=17
 :: The index of the interface connected to the LAN
-set LAN_IF_IDX=7
+set LAN_IF_IDX=2
 
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
@@ -32,6 +32,7 @@ if "%1"=="on" (
   call :SHOWIF
   call :SHOWDEFGW
   call :SHOWROUTES
+  ping 8.8.8.8
   pause
   exit /b
 ) else (
@@ -232,9 +233,9 @@ for /f "delims=" %%a in ('netsh interface ipv4 show interface') do (
   set a=!a:~0,3!
   set a=!a: =!
   if !a! EQU %LAN_IF_IDX% (
-    echo %ESC%93;40m%%a%ESC%0m
+    echo %ESC%93;40m%%a ^<-- Assumed LAN interface%ESC%0m
   ) else if !a! EQU %INTERNET_IF_IDX% (
-    echo %ESC%92;40m%%a%ESC%0m
+    echo %ESC%92;40m%%a ^<-- Assumed Internet interface%ESC%0m
   ) else (
     echo %%a
   )
@@ -291,4 +292,3 @@ for /f "tokens=1,2,3,4,5" %%a in ('route -4 print') do (
   if !count! EQU 2 exit /b 0
 )
 exit /b 0
-
