@@ -20,7 +20,7 @@ set LAN_IF_IDX=2
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
 :: Capture 0x1B (escape) into variable ESC
-for /f "delims=" %%E in ('forfiles /p "%~dp0." /m "%~nx0" /c "cmd /c echo(0x1B"') do (
+for /f "delims=" %%E in ('forfiles /p "%windir%\System32" /m kernel32.dll /c "cmd /c echo(0x1B"') do (
   set "ESC=%%E["
 )
 
@@ -42,6 +42,7 @@ if "%1"=="on" (
 )
 
 call :CHECKADMIN
+if ERRORLEVEL 1 goto :EXIT
 
 set THISFILE=%~f0
 
@@ -105,8 +106,9 @@ if %INTERNET_R_METRIC% GEQ %LAN_R_METRIC% (
   exit /b 1
 )
 
+:EXIT
 pause
-exit /b 0
+goto :EOF
 
 :: ===========================================================================
 :: Subroutines
@@ -120,8 +122,7 @@ echo    right-click and choose "Run as administrator",
 echo    or run it from an elevated console,
 echo    or run it from gsudo.
 echo.
-pause
-exit /b 0
+exit /b 1
 
 :GETIFPARM
 :: Find metric and name of interfaces
