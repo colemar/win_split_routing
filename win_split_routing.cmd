@@ -13,7 +13,7 @@ DATA#end
 
 :: The index of the interface connected to the global internet (see: netsh interface ipv4 show interface)
 :: Most likely the WiFi interface
-set INTERNET_IF_IDX=17
+set INTERNET_IF_IDX=19
 :: The index of the interface connected to the LAN
 set LAN_IF_IDX=2
 
@@ -48,7 +48,7 @@ set THISFILE=%~f0
 call :GETIFPARM
 
 if "%INTERNET_IF_NAME%"=="" (
-  echo Cannot find interface %INTERNET_IF_IDX%
+  echo %ESC%91;40mCannot find interface %INTERNET_IF_IDX%%ESC%0m
   call :SHOWIF
   exit /b 1
 )
@@ -60,18 +60,18 @@ if %ACTION%==off (
 )
 
 if %LAN_IF_METRIC%=="" (
-  echo Cannot find metric for interface %LAN_IF_IDX%
+  echo %ESC%91;40mCannot find metric for interface %LAN_IF_IDX%%ESC%0m
   call :SHOWIF
   exit /b 1
 )
 
 call :GETDEFGW
 if not defined LAN_DEFGATEWAY (
-  echo Cannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"
+  echo %ESC%91;40mCannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"%ESC%0m
   exit /b 1
 )
 if not defined INTERNET_DEFGATEWAY (
-  echo Cannot find default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"
+  echo %ESC%91;40mCannot find default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"%ESC%0m
   exit /b 1
 )
 
@@ -84,11 +84,11 @@ call :SHOWIF
 
 call :GETRM
 if not defined LAN_R_METRIC (
-  echo Cannot find default route metric of interface %LAN_IF_IDX% "%LAN_IF_NAME%"
+  echo %ESC%91;40mCannot find default route metric of interface %LAN_IF_IDX% "%LAN_IF_NAME%"%ESC%0m
   exit /b 1
 )
 if not defined INTERNET_R_METRIC (
-  echo Cannot find default route metric of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"
+  echo %ESC%91;40mCannot find default route metric of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"%ESC%0m
   exit /b 1
 )
 
@@ -254,20 +254,20 @@ exit /b 0
 :: Show default gateways
 call :GETIFPARM
 if "%INTERNET_IF_NAME%"=="" (
-  echo Cannot find interface %INTERNET_IF_IDX%
+  echo %ESC%91;40mCannot find interface %INTERNET_IF_IDX%%ESC%0m
   exit /b 1
 )
 if "%LAN_IF_NAME%"=="" (
-  echo Cannot find interface %LAN_IF_IDX%
+  echo %ESC%91;40mCannot find interface %LAN_IF_IDX%%ESC%0m
   exit /b 1
 )
 call :GETDEFGW
 if not defined LAN_DEFGATEWAY (
-  echo Cannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"
+  echo %ESC%91;40mCannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"%ESC%0m
   exit /b 1
 )
 if not defined INTERNET_DEFGATEWAY (
-  echo Cannot find default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"
+  echo %ESC%91;40mCannot find default gateway of interface %INTERNET_IF_IDX% "%INTERNET_IF_NAME%"%ESC%0m
   exit /b 1
 )
 echo Current default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%" is %LAN_DEFGATEWAY%
