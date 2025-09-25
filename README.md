@@ -31,4 +31,5 @@ By adding a dedicated route via the ethernet interface for each private subnet t
 8. When you don't need split routing anymore, run `win_split_routing off`.
 9. When you don't remember the current status, run `win_split_routing show`
 
-![image](https://github.com/user-attachments/assets/4e8fd848-23e6-43a4-8021-dd62b55036b2)
+<img width="730" height="1019" alt="image" src="https://github.com/user-attachments/assets/d60486a0-e6d6-43c8-9785-27d9bc8c9b65" />
+
