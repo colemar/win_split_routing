@@ -1,4 +1,11 @@
 @echo off
+
+:: The name of the interface connected to the global internet (see: win_split_routing info)
+:: Most likely the WiFi interface
+:: setx INTERNET_IF_NAME "Intel(R) Wi-Fi 6 AX201 160MHz"
+:: The name of the interface connected to the LAN
+:: setx LAN_IF_NAME "Realtek Gaming USB 2.5GbE Family Controller"
+
 goto :START
 DATA#subnets
 10.0.0.0/8       # PRIVATE-ADDRESS-ABLK-RFC1918-IANA-RESERVED
@@ -11,12 +18,6 @@ DATA#end
 
 :START
 
-:: The index of the interface connected to the global internet (see: netsh interface ipv4 show interface)
-:: Most likely the WiFi interface
-set INTERNET_IF_IDX=19
-:: The index of the interface connected to the LAN
-set LAN_IF_IDX=2
-
 setlocal ENABLEEXTENSIONS ENABLEDELAYEDEXPANSION
 
 :: Capture 0x1B (escape) into variable ESC
@@ -24,11 +25,28 @@ for /f "delims=" %%E in ('forfiles /p "%windir%\System32" /m kernel32.dll /c "cm
   set "ESC=%%E["
 )
 
-if "%1"=="on" (
+if "%1"=="l" (
+  call :SHOWLIST
+  exit /b
+)
+
+set INTERNET_IF_IDX=
+set LAN_IF_IDX=
+call :GETIFIDX
+if "%INTERNET_IF_IDX%"=="" (
+  echo You must set INTERNET_IF_NAME according to 'win_split_routing info'
+  exit /b 1
+)
+if "%LAN_IF_IDX%"=="" (
+  echo You must set LAN_IF_NAME according to 'win_split_routing info'
+  exit /b 1
+)
+
+if "%1"=="e" (
   set ACTION=on
-) else if "%1"=="off" (
+) else if "%1"=="d" (
   set ACTION=off
-) else if "%1"=="show" (
+) else if "%1"=="s" (
   call :SHOWIF
   call :SHOWDEFGW
   call :SHOWROUTES
@@ -36,7 +54,11 @@ if "%1"=="on" (
   pause
   exit /b
 ) else (
-  echo Usage: win_split_routing on^|off^|show
+  echo Usage: win_split_routing l^|s^|e^|d
+  echo l Show interface list
+  echo s Show status
+  echo e Enable split routing
+  echo d Disable split routing 
   pause
   exit /b
 )
@@ -47,12 +69,6 @@ if ERRORLEVEL 1 goto :EXIT
 set THISFILE=%~f0
 
 call :GETIFPARM
-
-if "%INTERNET_IF_NAME%"=="" (
-  echo %ESC%91;40mCannot find interface %INTERNET_IF_IDX%%ESC%0m
-  call :SHOWIF
-  exit /b 1
-)
 
 if %ACTION%==off (
   call :TURNOFF
@@ -113,6 +129,33 @@ goto :EOF
 :: ===========================================================================
 :: Subroutines
 
+:SHOWLIST
+:: Show interface list
+set count=0
+for /f "delims=" %%a in ('route -4 print') do (
+  echo %%a
+  set a=%%a
+  if "!a:~0,1!"=="=" set /A count+=1
+  if !count! EQU 2 exit /b 0
+)
+exit /b 0
+
+:GETIFIDX
+:: Get indexes of interfaces named %INTERNET_IF_NAME% %LAN_IF_NAME%
+set count=0
+for /f "delims=" %%a in ('route -4 print') do (
+  set a=%%a
+  if "!a:~3,3!"=="..." (
+    set x=!a:~0,3!
+    set y=!a:~30!
+    if "!y!"=="%INTERNET_IF_NAME%" set INTERNET_IF_IDX=!x: =!
+    if "!y!"=="%LAN_IF_NAME%" set LAN_IF_IDX=!x: =!
+  )
+  if "!a:~0,1!"=="=" set /A count+=1
+  if !count! EQU 2 exit /b 0
+)
+exit /b 0
+
 :CHECKADMIN
 :: Check administrative privileges
 fsutil dirty query %systemdrive% > nul
@@ -125,15 +168,11 @@ echo.
 exit /b 1
 
 :GETIFPARM
-:: Find metric and name of interfaces
+:: Find metric of LAN interface 
 set LAN_IF_METRIC=0
 for /f "tokens=1,2,3,4*" %%a in ('netsh interface ipv4 show interface') do (
   if %%a EQU %LAN_IF_IDX% (
     set LAN_IF_METRIC=%%b
-    set LAN_IF_NAME=%%e
-  )
-  if %%a EQU %INTERNET_IF_IDX% (
-    set INTERNET_IF_NAME=%%e
   )
 )
 exit /b 0
@@ -254,14 +293,6 @@ exit /b 0
 :SHOWDEFGW
 :: Show default gateways
 call :GETIFPARM
-if "%INTERNET_IF_NAME%"=="" (
-  echo %ESC%91;40mCannot find interface %INTERNET_IF_IDX%%ESC%0m
-  exit /b 1
-)
-if "%LAN_IF_NAME%"=="" (
-  echo %ESC%91;40mCannot find interface %LAN_IF_IDX%%ESC%0m
-  exit /b 1
-)
 call :GETDEFGW
 if not defined LAN_DEFGATEWAY (
   echo %ESC%91;40mCannot find default gateway of interface %LAN_IF_IDX% "%LAN_IF_NAME%"%ESC%0m
