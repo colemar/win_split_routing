@@ -26,7 +26,7 @@ By adding a dedicated route via the ethernet interface for each private subnet t
 ### How does the script `wsr.cmd` work?
 
 1. The file itself contains a section in the beginning listing the private subnets which are known to be reachable through the LAN. This list is modifiable of course. You probably want to leave the first three subnets unchanged: those are the standard private subnets sanctioned by IANA.
-2. You can identify the target interfaces by looking at the output of `wsr l` (list) and noting the interface names in the last column. Set the environment variabile `INTERNET_IF_NAME` and `LAN_IF_NAME` accordingly. For example: `setx INTERNET_IF_NAME "Intel(R) Wi-Fi 6 AX201 160MHz"`.
+2. You can identify the target interfaces by looking at the output of `wsr l` (list) and noting the interface names in the last column. Set the environment variables `INTERNET_IF_NAME` and `LAN_IF_NAME` accordingly. For example: `setx INTERNET_IF_NAME "Intel(R) Wi-Fi 6 AX201 160MHz"`.
 3. Run `wsr e` (enable) ...
 4. It sets the metric of the INTERNET interface to 1.
 5. It finds and shows the metric and the default gateway of the LAN interface and the default gateway of the INTERNET interface.
