@@ -54,7 +54,7 @@ if "%1"=="e" (
   pause
   exit /b
 ) else (
-  echo Usage: win_split_routing l^|s^|e^|d
+  echo Usage: wsr l^|s^|e^|d
   echo l Show interface list
   echo s Show status
   echo e Enable split routing
