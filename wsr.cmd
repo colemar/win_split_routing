@@ -1,12 +1,14 @@
 @echo off
 
-:: The name of the interface connected to the global internet (see: win_split_routing info)
+:: The name of the interface connected to the global internet (see: `wsr l`).
 :: Most likely the WiFi interface
-:: setx INTERNET_IF_NAME "Intel(R) Wi-Fi 6 AX201 160MHz"
+if "%INTERNET_IF_NAME%"=="" set INTERNET_IF_NAME=Intel(R) Wi-Fi 6 AX201 160MHz
 :: The name of the interface connected to the LAN
-:: setx LAN_IF_NAME "Realtek Gaming USB 2.5GbE Family Controller"
+if "%LAN_IF_NAME%"=="" set LAN_IF_NAME=Realtek Gaming USB 2.5GbE Family Controller
 
 goto :START
+:: List of private subnets reachable through interface INTERNET_IF_NAME.
+:: For each line a persistent route will be created.
 DATA#subnets
 10.0.0.0/8       # PRIVATE-ADDRESS-ABLK-RFC1918-IANA-RESERVED
 172.16.0.0/12    # PRIVATE-ADDRESS-BBLK-RFC1918-IANA-RESERVED
@@ -34,11 +36,11 @@ set INTERNET_IF_IDX=
 set LAN_IF_IDX=
 call :GETIFIDX
 if "%INTERNET_IF_IDX%"=="" (
-  echo You must set INTERNET_IF_NAME according to 'win_split_routing info'
+  echo You must set INTERNET_IF_NAME according to 'wsr l'
   exit /b 1
 )
 if "%LAN_IF_IDX%"=="" (
-  echo You must set LAN_IF_NAME according to 'win_split_routing info'
+  echo You must set LAN_IF_NAME according to 'wsr l'
   exit /b 1
 )
 
@@ -58,7 +60,7 @@ if "%1"=="e" (
   echo l Show interface list
   echo s Show status
   echo e Enable split routing
-  echo d Disable split routing 
+  echo d Disable split routing
   pause
   exit /b
 )
@@ -168,7 +170,7 @@ echo.
 exit /b 1
 
 :GETIFPARM
-:: Find metric of LAN interface 
+:: Find metric of LAN interface
 set LAN_IF_METRIC=0
 for /f "tokens=1,2,3,4*" %%a in ('netsh interface ipv4 show interface') do (
   if %%a EQU %LAN_IF_IDX% (
@@ -223,7 +225,7 @@ for /f "tokens=1,2,3,4,5*" %%a in ('netsh interface ipv4 show route') do (
 exit /b 0
 
 :SETPR
-:: Get subnets from this file and set permanent local routes 
+:: Get subnets from this file and set permanent local routes
 set DEFGW=%1
 echo Setting permanent routes via %DEFGW%:
 set status=0
